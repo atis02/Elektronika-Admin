@@ -21,6 +21,10 @@ import Banners from "./Pages/Banner";
 import Partners from "./Pages/Partners";
 import Orders from "./Pages/Orders";
 import Order from "./Pages/Order";
+import Auction from "./Pages/Auction";
+import FinishedAuctions from "./Pages/FinishedAuctions";
+import NewAuction from "./Pages/Auction/components/NewAuction";
+import UpdateAuction from "./Pages/Auction/components/UpdateAuction";
 
 function App() {
   // const refToken = store.getState().refreshToken;
@@ -62,9 +66,26 @@ function App() {
             path: "/orders",
             element: <Orders />,
           },
+
           {
             path: "/orders/:id",
             element: <Order />,
+          },
+          {
+            path: "/auction",
+            element: <Auction />,
+          },
+          {
+            path: "/auction/new",
+            element: <NewAuction />,
+          },
+          {
+            path: "/auction/:id",
+            element: <UpdateAuction />,
+          },
+          {
+            path: "/auction/finished",
+            element: <FinishedAuctions />,
           },
           {
             path: "/dashboard",

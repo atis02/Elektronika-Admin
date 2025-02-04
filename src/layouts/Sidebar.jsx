@@ -48,6 +48,7 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import HandshakeIcon from "@mui/icons-material/Handshake";
 import { FaClipboardList } from "react-icons/fa";
+import { RiAuctionFill } from "react-icons/ri";
 
 export default function SidebarNav() {
   const [open, setOpen] = useState(() =>
@@ -101,6 +102,12 @@ export default function SidebarNav() {
       path: "/products",
       icon: <PiPackageFill size={26} />,
     },
+    {
+      label: "Auksion",
+      path: "/auction",
+      icon: <RiAuctionFill size={26} />,
+    },
+
     {
       label: "Kategoriýa",
       path: "/category",
@@ -318,6 +325,7 @@ export default function SidebarNav() {
           <Menu
             menuItemStyles={{
               button: {
+                height: 40,
                 margin: "5px",
                 backgroundColor: mode === "dark" ? "#0D1117" : "#F3F2F7",
                 "&:hover": {

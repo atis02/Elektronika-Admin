@@ -9,6 +9,7 @@ import BrandReducer from "./BrandSlice";
 import bannerReducer from "./BannerSlice";
 import PartnerReducer from "./PartnerSlice";
 import OrderReducer from "./OrderSlice";
+import AuctionReducer from "./AuctionSlice";
 
 export const store = configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export const store = configureStore({
     banner: bannerReducer,
     partner: PartnerReducer,
     order: OrderReducer,
+    auction: AuctionReducer,
   },
 });
