@@ -33,11 +33,11 @@ color:inherit;
   font-family: 'Montserrat';
   font-size: 28 !important;
 }
-textarea:focus{
+.textarea:focus{
   outline: none;
   border: 2px solid #00B69B !important;
 }
-textarea:hover{
+.textarea:hover{
   outline: none;
   border: 1px solid #00B69B !important;
 }

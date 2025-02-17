@@ -16,6 +16,8 @@ import NewProduct from "./Pages/Products/components/NewProduct";
 import Product from "./Pages/Product";
 import Settings from "./Pages/Settings";
 import ProductStasus from "./Pages/Settings/components/ProductStasus/ProductStasus";
+import OrderStasus from "./Pages/Settings/components/orderStasus/OrderStatus";
+import RegionsAndPrice from "./Pages/Settings/components/RegionsAndPrice/RegionsAndPrice";
 import Brands from "./Pages/Brand";
 import Banners from "./Pages/Banner";
 import Partners from "./Pages/Partners";
@@ -25,6 +27,7 @@ import Auction from "./Pages/Auction";
 import FinishedAuctions from "./Pages/FinishedAuctions";
 import NewAuction from "./Pages/Auction/components/NewAuction";
 import UpdateAuction from "./Pages/Auction/components/UpdateAuction";
+import UsersAdminPage from "./Pages/Settings/components/UsersAdminPage/UsersAdminPage";
 
 function App() {
   // const refToken = store.getState().refreshToken;
@@ -137,16 +140,16 @@ function App() {
           },
           {
             path: "/settings/orderStatuses",
-            element: <ProductStasus />,
+            element: <OrderStasus />,
           },
 
           {
             path: "/settings/regions",
-            element: <ProductStasus />,
+            element: <RegionsAndPrice />,
           },
           {
             path: "/settings/users",
-            element: <ProductStasus />,
+            element: <UsersAdminPage />,
           },
           {
             path: "/settings/clients",

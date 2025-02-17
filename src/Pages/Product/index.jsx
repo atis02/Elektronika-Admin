@@ -3,32 +3,19 @@ import {
   Autocomplete,
   Box,
   Button,
-  CircularProgress,
   Divider,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
 import { useThemeContext } from "../../Components/db/Theme/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
 import Forms from "./components/Forms";
-import AddIcon from "@mui/icons-material/Add";
-import ClearIcon from "@mui/icons-material/Clear";
 import SwiperWithFileInput from "./components/ImageInput";
-import MinImgInput from "./components/MinImgInput";
-import HoverImgInput from "./components/HoverImgInput";
 import { LuPackagePlus } from "react-icons/lu";
 import ProductSwitchComponent from "../../layouts/ProductSwitch";
 import { toast } from "react-toastify";
@@ -37,25 +24,22 @@ import {
   createProductColor,
   deleteProductColor,
   getProductById,
+  getProductProperties,
   updateProduct,
 } from "../../Components/db/Redux/api/ProductSlice";
 import { getCategory } from "../../Components/db/Redux/api/ReduxSlice";
 import { getSubCategory } from "../../Components/db/Redux/api/SubCategorySlice";
-import { BASE_URL_Img } from "../../Components/db/Redux/api/AxiosHelper";
 import SaveIcon from "@mui/icons-material/Save";
-import CreateIcon from "@mui/icons-material/Create";
 import ProductTypeUpdate from "./updateProductType/ProductTypeUpdate";
 import { getSegment } from "../../Components/db/Redux/api/SegmentSlice";
 import { getStatusProduct } from "../../Components/db/Redux/api/StatusSlice";
 import { getBrand } from "../../Components/db/Redux/api/BrandSlice";
-import UpdateImageSwiper from "./components/UpdateImageSwiper";
+import AddProperty from "./components/Properties";
 
 const UpdateProduct = () => {
   const data = useSelector((state) => state.product.onProductData);
-  const status = useSelector((state) => state.product.status);
-  const error = useSelector((state) => state.product.error);
+  const propertyData = useSelector((state) => state.product.productProperties);
   const [active, setActive] = useState(data?.isActive);
-
   const [formData, setFormData] = useState({
     nameTm: data?.nameTm,
     nameRu: data?.nameRu,
@@ -76,9 +60,8 @@ const UpdateProduct = () => {
     productQuantity: data?.productQuantity,
     isActive: data?.isActive,
   });
-
-  const [openProductType, setOpenProductType] = useState(false);
-  const [images, setImages] = useState([]);
+  const [openProperty, setOpenProperty] = useState(false);
+  const [properties, setProperties] = useState([]);
   const [productImages, setProductImages] = useState([
     null,
     null,
@@ -87,39 +70,23 @@ const UpdateProduct = () => {
     null,
   ]);
   const [productImagesServer, setProductImagesServer] = useState([]);
-
-  const [imagesMin, setImagesMin] = useState(null);
-  const [imageMin, setImageMin] = useState(null);
-  const [imagesHover, setImagesHover] = useState(null);
-  const [imageHover, setImageHover] = useState(null);
-  const [activeProduct, setActiveProduct] = useState(true);
   const [selectedValue, setSelectedValue] = useState([]);
   const [textFieldValues, setTextFieldValues] = useState([]);
-  const [updateProductType, setUpdateProductType] = useState([]);
-  const [formValues, setFormValues] = useState({
-    descriptionTm: data?.descriptionTm,
-    descriptionRu: data?.descriptionRu,
-    descriptionEn: data?.descriptionEn,
-    sellPrice: data?.sellPrice,
-    discount_priceTMT: data?.discount_priceTMT || 0,
-    discount_pricePercent: data?.discount_pricePercent || 0,
-    incomePrice: data?.incomePrice,
-  });
-  const [productType, setProductType] = useState(data?.ProductColorDetails);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const { mode } = useThemeContext();
   const params = useParams();
 
-  const sizeTable = useSelector((es) => es.size.data);
-  const sizeTableStatus = useSelector((es) => es.size.status);
   const categories = useSelector((state) => state.data.data);
   const subCategories = useSelector((state) => state.subcategory.data);
   const segments = useSelector((state) => state.segment.data);
   const brands = useSelector((state) => state.brand.data);
   const statuses = useSelector((state) => state.status.data);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const addProperty = (key, value) => {
+    setProperties((prev) => [...prev, { key, value }]);
+  };
 
   useEffect(() => {
     setFormData({
@@ -152,7 +119,6 @@ const UpdateProduct = () => {
 
     setProductImagesServer(imagesArray);
     setProductImages(imagesArray);
-    setImages(imagesArray);
   }, [data]);
 
   useEffect(() => {
@@ -162,6 +128,7 @@ const UpdateProduct = () => {
     dispatch(getBrand());
     dispatch(getStatusProduct());
     dispatch(getSubCategory());
+    dispatch(getProductProperties(params.id));
   }, [dispatch]);
 
   useEffect(() => {
@@ -192,13 +159,6 @@ const UpdateProduct = () => {
   const handleStatusChange = (event, value) => {
     setFormData((prev) => ({ ...prev, statusId: value ? value.id : null }));
   };
-  // const handleStatusChange = (event, value) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     statusId: value ? value.id : null,
-  //   }));
-  // };
-
   const handleSegmentChange = (event, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -218,7 +178,6 @@ const UpdateProduct = () => {
       const previewUrl = URL.createObjectURL(file);
       newProductImages[index] = { imagePreview: previewUrl, file: file }; // Здесь мы сохраняем и preview URL, и сам файл
       setProductImages(newProductImages);
-      setImages(newProductImages.map((img) => img.image));
     } else {
       const newProductImages = [...productImages];
       newProductImages[index] = {
@@ -228,22 +187,6 @@ const UpdateProduct = () => {
       setProductImages(newProductImages);
     }
   };
-
-  const handleMinImage = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageMin(file);
-      setImagesMin(URL.createObjectURL(file));
-    }
-  };
-  const handleHoverImage = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageHover(file);
-      setImagesHover(URL.createObjectURL(file));
-    }
-  };
-
   const inputStyle = {
     "& .MuiOutlinedInput-root": {
       "&:hover fieldset": {
@@ -260,27 +203,7 @@ const UpdateProduct = () => {
       },
     },
   };
-  const inputsStyle2 = {
-    "& .MuiOutlinedInput-root": {
-      height: 40,
-      width: "150px",
-      ...(mode === "dark" ? { color: "#fff" } : { color: "#00B69B" }),
-      "&:hover fieldset": {
-        borderColor: "#00B69B",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "#00B69B",
-        borderWidth: 2,
-      },
-    },
-    "& .MuiInputLabel-root": {
-      pt: -3,
-      lineHeight: "1",
-      "&.Mui-focused": {
-        color: "#00B69B",
-      },
-    },
-  };
+
   const handleSwitchToggle = (newState) => {
     setFormData((prev) => ({
       ...prev,
@@ -288,9 +211,7 @@ const UpdateProduct = () => {
     }));
     setActive(newState);
   };
-  const handleSwitchToggleProduct = (newState) => {
-    setActiveProduct(newState);
-  };
+
   const handleChangeSelectedValue = (event) => {
     setSelectedValue([event.target.value]);
   };
@@ -313,143 +234,7 @@ const UpdateProduct = () => {
       sizesWithQuantities: updatedTextFieldValues, // Update sizesWithQuantities in formValues
     }));
   };
-
-  const style2 = {
-    cursor: "pointer",
-    p: 0,
-    pl: 2,
-    fontFamily: "Montserrat",
-    textAlign: "center",
-  };
-  const handleClear = () => {
-    setTextFieldValues([]); // Clear the textFieldValues array
-    setFormValues({
-      sizesWithQuantities: [],
-      nameTm: "",
-      nameRu: "",
-      nameEn: "",
-      descriptionTm: "",
-      descriptionRu: "",
-      descriptionEn: "",
-      sellPrice: "",
-      discount_priceTMT: 0,
-      discount_pricePercent: 0,
-      incomePrice: "",
-    });
-    setSelectedValue([]);
-    setTextFieldValues([]);
-    setImages(Array(5).fill(null));
-    setImagesMin(null);
-    setImageMin(null);
-    setImagesHover(null);
-    setImageHover(null);
-    setProductImages([]);
-  };
-
-  const handleNewProductSubmit = () => {
-    const checkAllData = (data) => {
-      const keysToCheck = [
-        "incomePrice",
-        "nameEn",
-        "nameRu",
-        "nameTm",
-        "sellPrice",
-      ];
-
-      // Check required fields
-      for (let key of keysToCheck) {
-        if (!data[key]) {
-          toast.warn(`Maglumatlary doly giriz! (${key} is missing)`);
-          return false;
-        }
-      }
-
-      // Check sizes and quantities
-      if (
-        !data.sizesWithQuantities.length ||
-        !selectedValue.length ||
-        !selectedValue[0]?.sizes?.length
-      ) {
-        toast.warn(`Razmeri hökman girizmeli!`);
-        return false;
-      }
-
-      for (let i = 0; i < data.sizesWithQuantities.length; i++) {
-        const size = data.sizesWithQuantities[i];
-        if (size.size === 0) {
-          toast.warn(`Size for entry ${i} is invalid`);
-          return false;
-        }
-
-        if (!size.quantity || size.quantity === 0) {
-          toast.warn(`Haryt sany ${size.size} razmerde ýok`);
-          return false;
-        }
-      }
-
-      // Check images
-      if (
-        !imagesMin ||
-        !imagesHover ||
-        !images[0] ||
-        !productImages.length ||
-        !imageHover ||
-        !imageMin
-      ) {
-        toast.warn(`Surat goşmaly!`);
-        return false;
-      }
-
-      return true; // All checks passed
-    };
-
-    // Validate form data
-    if (!checkAllData(formValues)) {
-      return; // Exit if validation fails
-    }
-
-    const colorDetail = JSON.stringify(formValues);
-    const body = new FormData();
-    body.append("colorDetail", colorDetail);
-    body.append("hoverImage", imageHover);
-    body.append("productId", params.id);
-    productImages.forEach((image) => body.append("fullImages", image));
-    body.append("minImage", imageMin);
-    dispatch(createProductColor({ body: body, id: params.id }));
-    handleClear();
-    setOpenProductType(false);
-  };
-
   const navigate = useNavigate();
-  const handleDelete = (id) => {
-    if (id) {
-      dispatch(deleteProductColor({ body: id, id: params.id }));
-    }
-  };
-
-  const handleSubmitNewColor = () => {
-    const colorDetail = JSON.stringify(productType);
-    const body = new FormData();
-    body.append("colorDetail", colorDetail);
-    body.append("hoverImage", imageHover);
-    body.append("productId", data?.id);
-    productImages.forEach((image) => body.append("fullImages", image));
-    body.append("minImage", imageMin);
-    if (
-      !data?.id ||
-      !productType.length ||
-      !productImages.length ||
-      imageHover == null ||
-      imagesMin == null
-    ) {
-      toast.error("Maglumatlary giriziň!");
-      return;
-    } else {
-      dispatch(createProductColor({ body: body, id: data?.id }));
-      // navigate("/products");
-    }
-  };
-
   const handleSubmit = () => {
     const imageFields = [
       "imageOne",
@@ -458,32 +243,16 @@ const UpdateProduct = () => {
       "imageFour",
       "imageFive",
     ];
-    // const body = {
-    //   nameTm: formData.nameTm,
-    //   nameRu: formData.nameRu,
-    //   nameEn: formData.nameEn,
-    //   barcode: formData.barcode,
-    //   categoryId: formData.categoryId,
-    //   subCategoryId: formData.subCategoryId,
-    //   isActive: activeProduct,
-    //   id: params.id,
-    //   statusId: formData.statusId,
-    //   segmentId: formData.segmentId,
-    //   brandId: formData.brandId,
-    // };
+
     const colorDetail = JSON.stringify([formData]);
     const body = new FormData();
     body.append("colorDetail", colorDetail);
     body.append("productId", params.id);
-    // productImages?.forEach((image, index) => {
-    //   // body.append(imageFields[index], image || "");
-    //   body.append(imageFields[index], image?.image || image.file);
-    // });
+
     productImages?.forEach((image, index) => {
       const imageValue = image?.file || image?.image || null;
       body.append(imageFields[index], imageValue);
     });
-    console.log(formData);
 
     if (
       !formData.nameTm ||
@@ -496,7 +265,6 @@ const UpdateProduct = () => {
       formData.statusId == null ||
       formData.brandId == null ||
       formData.sellPrice == ""
-      // formData.productQuantity != ""
     ) {
       toast.error("Maglumatlary giriziň!");
       return;
@@ -505,17 +273,7 @@ const UpdateProduct = () => {
       navigate("/products");
     }
   };
-  const selectedValueSubcategory = subCategories.find(
-    (subCategory) => subCategory.id === formData.subCategoryId
-  );
 
-  const productNavigate = (id) => {
-    navigate(`/products/${params.id}/${id}`);
-  };
-  const handleUpdateProductType = (item) => {
-    setUpdateProductType(item);
-    setOpen(true);
-  };
   return (
     <Box height="100vh" overflow="auto" width="100%" p={1}>
       <Stack direction="row" p="5px 13px" justifyContent="space-between">
@@ -651,11 +409,35 @@ const UpdateProduct = () => {
       </Stack>
       <Divider sx={{ mt: 2, mb: 2, bgcolor: "gray" }} />
 
-      <ProductTypeUpdate
-        open={open}
-        handleClose={handleClose}
-        data={updateProductType}
-      />
+      <ProductTypeUpdate open={open} handleClose={handleClose} />
+      <Stack width="100%" mt={2} direction="row" spacing={2}>
+        <Button
+          sx={{
+            textTransform: "revert",
+            minWidth: "18%",
+            height: 40,
+            color: "#fff",
+            bgcolor: "#00B69B",
+            "&:hover": { bgcolor: "#00B69B" },
+            fontWeight: 500,
+            fontFamily: "Montserrat",
+            fontSize: 16,
+            mt: 2,
+          }}
+          onClick={() => setOpenProperty(!openProperty)}
+        >
+          <LuPackagePlus style={{ width: 30, height: 30, marginRight: 8 }} />
+          Aýratynlyklary ({propertyData?.length})
+        </Button>
+        <AddProperty
+          open={openProperty}
+          handleClose={() => setOpenProperty(false)}
+          properties={properties}
+          addProperty={addProperty}
+          setProperties={setProperties}
+          productId={data?.id}
+        />
+      </Stack>
       <Stack mt={1} width="100%" alignItems={"end"}>
         <Stack width="100%" mt={0}>
           <Forms
@@ -667,7 +449,6 @@ const UpdateProduct = () => {
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
             handleChangeSelectedValue={handleChangeSelectedValue}
-            setFormValues={setFormValues}
           />
 
           <Stack direction="row" spacing={2}>
@@ -678,19 +459,6 @@ const UpdateProduct = () => {
               setImages={setProductImages}
               handleFileChange={handleFileChange}
             />
-            {/* ) : (
-              <UpdateImageSwiper
-                images={productImagesServer}
-                handleFileChange={handleFileChange}
-                buttons={productImages}
-              />
-            )} */}
-            {/* <SwiperWithFileInput
-              images={images}
-              setImages={setImages}
-              handleFileChange={handleFileChange}
-            /> */}
-
             <Stack direction="column" spacing={1} width="40%" height="30%">
               <Stack
                 direction="row"
@@ -706,7 +474,7 @@ const UpdateProduct = () => {
                     statuses.find(
                       (status) => status.id === formData.statusId
                     ) || null
-                  } // Find the default status
+                  }
                   getOptionLabel={(option) => option.nameTm || ""}
                   onChange={handleStatusChange}
                   renderInput={(params) => (

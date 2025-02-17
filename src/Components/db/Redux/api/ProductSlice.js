@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 const initialState = {
   data: [],
   onProductData: [],
+  productProperties: [],
   status: "idle", // Loading status
   meta: {
     limit: 10,
@@ -121,9 +122,7 @@ export const createProduct = createAsyncThunk("createProduct", async (body) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    if (
-      resp.data.message === "Product, colors, and sizes created successfully"
-    ) {
+    if (resp.data.message === "Product and properties created successfully") {
       toast.success("Üstünlikli!");
       const response = await AxiosInstance.get("/product/all");
       return response.data;
@@ -176,6 +175,84 @@ export const updateProduct = createAsyncThunk("updateProduct", async (body) => {
     toast.error(error.message);
   }
 });
+export const createProperty = createAsyncThunk(
+  "createProperty",
+  async (body) => {
+    try {
+      const resp = await AxiosInstance.post(`/product/addProperty`, body.body);
+      if (resp.data.message === "New product property added successfully") {
+        toast.success("Üstünlikli!");
+        const response = await AxiosInstance.get(
+          `/product/productProperties?productId=${body.productId}`
+        );
+        return response.data;
+      } else {
+        toast.error("Ýalňyşlyk!");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+);
+export const getProductProperties = createAsyncThunk(
+  "getProductProperties",
+  async (id) => {
+    try {
+      const resp = await AxiosInstance.get(
+        `/product/productProperties?productId=${id}`
+      );
+
+      return resp.data;
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+);
+export const updateProductProperty = createAsyncThunk(
+  "updateProductProperty",
+  async (body) => {
+    try {
+      const resp = await AxiosInstance.patch(
+        "/product/updateProperty",
+        body.body
+      );
+
+      if (resp.data.message === "Product property updated successfully") {
+        toast.success("Üstünlikli!");
+        const response = await AxiosInstance.get(
+          `/product/productProperties?productId=${body.productId}`
+        );
+        return response.data;
+      } else {
+        toast.error("Ýalňyşlyk!");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+);
+export const deleteProductProperty = createAsyncThunk(
+  "deleteProductProperty",
+  async (body) => {
+    try {
+      const resp = await AxiosInstance.delete(
+        `/product/removeProperty?productPropertyId=${body.productPropertyId}`
+      );
+
+      if (resp.data.message === "Product property deleted successfully") {
+        toast.success("Üstünlikli!");
+        const response = await AxiosInstance.get(
+          `/product/productProperties?productId=${body.productId}`
+        );
+        return response.data;
+      } else {
+        toast.error("Ýalňyşlyk!");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+);
 export const updateProductColor = createAsyncThunk(
   "updateProductColor",
   async (body) => {
@@ -242,6 +319,62 @@ const ProductSlice = createSlice({
         state.meta = action.payload; // Assuming the response has 'meta' for pagination info
       })
       .addCase(getProductById.rejected, (state, action) => {
+        state.status = "failed";
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(updateProductProperty.pending, (state) => {
+        state.status = "loading";
+        state.loading = true;
+      })
+      .addCase(updateProductProperty.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.loading = false;
+        state.productProperties = action.payload;
+      })
+      .addCase(updateProductProperty.rejected, (state, action) => {
+        state.status = "failed";
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(getProductProperties.pending, (state) => {
+        state.status = "loading";
+        state.loading = true;
+      })
+      .addCase(getProductProperties.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.loading = false;
+        state.productProperties = action.payload;
+      })
+      .addCase(getProductProperties.rejected, (state, action) => {
+        state.status = "failed";
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(createProperty.pending, (state) => {
+        state.status = "loading";
+        state.loading = true;
+      })
+      .addCase(createProperty.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.loading = false;
+        state.productProperties = action.payload;
+      })
+      .addCase(createProperty.rejected, (state, action) => {
+        state.status = "failed";
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(deleteProductProperty.pending, (state) => {
+        state.status = "loading";
+        state.loading = true;
+      })
+      .addCase(deleteProductProperty.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.loading = false;
+        state.productProperties = action.payload;
+      })
+      .addCase(deleteProductProperty.rejected, (state, action) => {
         state.status = "failed";
         state.loading = false;
         state.error = action.error.message;

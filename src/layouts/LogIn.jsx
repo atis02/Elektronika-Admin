@@ -23,7 +23,7 @@ import AxiosInstance, {
 
 const Login = () => {
   const [data, setData] = useState();
-  const [email, setEmail] = useState("admin");
+  const [name, setName] = useState("admin");
   const [password, setPassword] = useState("123456");
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ const Login = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [email, password]);
+  }, [name, password]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,18 +44,18 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (email.trim().length <= 0 || password.trim().length <= 0) {
+      if (name.trim().length <= 0 || password.trim().length <= 0) {
         toast.error("Dogry maglumatyňyzy giriziň!");
       } else {
         setLoading(true);
         const body = {
-          email,
+          name,
           password,
         };
         console.log(body);
 
         const response = await AxiosInstance.post(
-          `${BASE_URL}user/login`,
+          `${BASE_URL}user/loginAdminPage`,
           body
         );
         console.log(response.data);
@@ -198,8 +198,8 @@ const Login = () => {
                 variant="outlined"
                 fullWidth
                 name="username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 InputLabelProps={{
                   sx: {
                     color: "#efefef", // Set the label color

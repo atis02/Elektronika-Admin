@@ -3,6 +3,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  IconButton,
   Stack,
   TextField,
   Typography,
@@ -21,8 +22,11 @@ import { toast } from "react-toastify";
 import { createProduct } from "../../../Components/db/Redux/api/ProductSlice";
 import { useNavigate } from "react-router-dom";
 import { getBrand } from "../../../Components/db/Redux/api/BrandSlice";
+import AddProperty from "./PropertyAdd";
+
 const NewProduct = () => {
   const [active, setActive] = useState(true);
+  const [openProperty, setOpenProperty] = useState(false);
   const [formData, setFormData] = useState({
     nameTm: "",
     nameRu: "",
@@ -44,8 +48,6 @@ const NewProduct = () => {
     isActive: active || true,
   });
   const [filtered, setFiltered] = useState([]);
-  const [openProductType, setOpenProductType] = useState(true);
-  const [images, setImages] = useState();
   const [productImages, setProductImages] = useState([
     null,
     null,
@@ -53,22 +55,6 @@ const NewProduct = () => {
     null,
     null,
   ]);
-  const [imagesMin, setImagesMin] = useState(null);
-  const [imageMin, setImageMin] = useState(null);
-  const [imagesHover, setImagesHover] = useState(null);
-  const [imageHover, setImageHover] = useState(null);
-  const [textFieldValues, setTextFieldValues] = useState([]);
-  const [selectedValue, setSelectedValue] = useState([]);
-  const [formValues, setFormValues] = useState({
-    descriptionTm: "",
-    descriptionRu: "",
-    descriptionEn: "",
-    sellPrice: "",
-    discount_priceTMT: 0,
-    discount_pricePercent: 0,
-    incomePrice: 0,
-    productQuantity: 0,
-  });
   const [errors, setErrors] = useState({
     nameTm: false,
     nameRu: false,
@@ -83,9 +69,10 @@ const NewProduct = () => {
     incomePrice: false,
     productQuantity: false,
   });
-
-  // const [productImages, setProductImages] = useState([]);
-  const [productType, setProductType] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const addProperty = (key, value) => {
+    setProperties((prev) => [...prev, { key, value }]);
+  };
   const { mode } = useThemeContext();
 
   const categories = useSelector((state) => state.data.data);
@@ -94,6 +81,7 @@ const NewProduct = () => {
   const status = useSelector((state) => state.status.data);
   const subCategories = useSelector((state) => state.subcategory.data);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getSegment());
     dispatch(getBrand());
@@ -102,34 +90,16 @@ const NewProduct = () => {
     dispatch(getSubCategory());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (selectedValue.types?.length > 0) {
-      const initialValues = selectedValue.types.map((elem) => ({
-        size: elem.name,
-        quantity: 0,
-        sizeTableId: elem.sizeTableId,
-      }));
-      setTextFieldValues(initialValues);
-    }
-  }, [selectedValue.types]);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: value.trim() === "" }));
   };
   const handleProductTypeInputChange = (field, value) => {
-    // setFormValues((prevValues) => ({
-    //   ...prevValues,
-    //   [field]: value,
-    // }));
-
     setFormData((prevValues) => ({
       ...prevValues,
       [field]: value,
     }));
-
-    // setErrors((prev) => ({ ...prev, [field]: value.trim() === "" }));
   };
 
   const handleCategoryChange = (event, value) => {
@@ -178,38 +148,12 @@ const NewProduct = () => {
     setErrors((prev) => ({ ...prev, brandId: !brandId }));
   };
 
-  const addProductType = () => {
-    setOpenProductType(true);
-  };
-
-  // const handleFileChange = (event, index) => {
-  //   const file = event.target.files[0];
-  //   if (!file) return;
-  //   setProductImages((prevImagesAll) => [...prevImagesAll, file]);
-  //   const newImages = [...images];
-  //   newImages[index] = URL.createObjectURL(file);
-  //   setImages(newImages);
-  // };
   const handleFileChange = (e, index) => {
     const file = e.target.files[0];
     if (file) {
       const newProductImages = [...productImages];
       newProductImages[index] = file;
       setProductImages(newProductImages);
-    }
-  };
-  const handleMinImage = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageMin(file);
-      setImagesMin(URL.createObjectURL(file));
-    }
-  };
-  const handleHoverImage = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageHover(file);
-      setImagesHover(URL.createObjectURL(file));
     }
   };
 
@@ -229,121 +173,11 @@ const NewProduct = () => {
       },
     },
   };
-  const inputsStyle2 = {
-    "& .MuiOutlinedInput-root": {
-      height: 40,
-      width: "150px",
-      ...(mode === "dark" ? { color: "#fff" } : { color: "#00B69B" }),
-      "&:hover fieldset": {
-        borderColor: "#00B69B",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "#00B69B",
-        borderWidth: 2,
-      },
-    },
-    "& .MuiInputLabel-root": {
-      pt: -3,
-      lineHeight: "1",
-      "&.Mui-focused": {
-        color: "#00B69B",
-      },
-    },
-  };
   const handleSwitchToggle = (newState) => {
     setActive(newState);
   };
 
-  const handleChangeSelectedValue = (event) => {
-    setSelectedValue(event.target.value);
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      sizeTableId: event.target.value.id,
-    }));
-  };
-
-  const handleTextFieldChange = (sizeName, quantity) => {
-    const parsedQuantity = parseInt(quantity, 10) || 0;
-    // Parse input to a number
-    const updatedTextFieldValues = textFieldValues.map((item) =>
-      item.size === sizeName.name
-        ? {
-            ...item,
-            quantity: parsedQuantity,
-            sizeTableId: sizeName.sizeTableId,
-          }
-        : item
-    );
-    setTextFieldValues(updatedTextFieldValues);
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      sizesWithQuantities: updatedTextFieldValues,
-    }));
-  };
-
-  const style2 = {
-    p: 0,
-    pl: 2,
-    fontFamily: "Montserrat",
-    textAlign: "center",
-  };
-  const handleNewProductSubmit = () => {
-    const checkAllData = (data) => {
-      const keysToCheck = [
-        "incomePrice",
-        "nameEn",
-        "nameRu",
-        "nameTm",
-        "sellPrice",
-      ];
-      for (let key of keysToCheck) {
-        if (data[key] === null || data[key] === undefined || data[key] === "") {
-          toast.warn(`Maglumatlary doly giriz!`);
-          return false; // If any field is invalid, return false
-        }
-      }
-      for (let i = 0; i < data.sizesWithQuantities.length; i++) {
-        const size = data.sizesWithQuantities[i];
-
-        if (size.size === 0) {
-          toast.warn(`Size for entry ${i} is invalid`);
-          return false;
-        }
-
-        if (
-          size.quantity === null ||
-          size.quantity === undefined ||
-          size.quantity === 0
-        ) {
-          toast.warn(`Haryt sany ${size.size} razmerde ýok`);
-          return false; // If any quantity is invalid
-        }
-      }
-      if (!data.sizesWithQuantities.length) {
-        toast.warn(`Razmeri hökman girizmeli!`);
-        return false;
-      }
-      if (
-        // imagesMin == null || imagesHover == null ||
-        images[0] == null
-      ) {
-        toast.warn(`Surat goşmaly!`);
-        return;
-      }
-      toast.success("Üstünlikli!");
-      setProductType((prev) => [...prev, formValues]);
-      setOpenProductType(false);
-
-      return true; // Return true if everything is valid
-    };
-    checkAllData(formValues);
-  };
   const navigate = useNavigate();
-  const handleDelete = (index) => {
-    const filtered = [...productType];
-    filtered.splice(index, 1);
-    setProductType(filtered);
-  };
 
   const handleSubmit = () => {
     let valid = true;
@@ -373,9 +207,6 @@ const NewProduct = () => {
       }
     });
 
-    // Validate images
-
-    // Set errors and return if valid
     setErrors(newErrors);
     if (!valid) {
       toast.error("Maglumatlary doly giriz!");
@@ -401,50 +232,12 @@ const NewProduct = () => {
     productImages.forEach((image, index) => {
       body.append(imageFields[index], image || "");
     });
-
+    const productProperties = JSON.stringify(properties);
+    body.append("productProperties", productProperties);
     dispatch(createProduct(body));
     navigate("/products");
   };
-  // const handleSubmit = () => {
-  //   const imageFields = [
-  //     "imageOne",
-  //     "imageTwo",
-  //     "imageThree",
-  //     "imageFour",
-  //     "imageFive",
-  //   ];
-  //   const productDetail = JSON.stringify(formData);
-  //   // const colorDetail = JSON.stringify(productType);
-  //   const body = new FormData();
-  //   body.append("productDetail", productDetail);
-  //   // body.append("hoverImage", imageHover);
 
-  //   productImages.forEach((image, index) => {
-  //     body.append(imageFields[index], image || "");
-  //   });
-  //   // body.append("minImage", imageMin);
-  //   if (
-  //     !formData.nameTm ||
-  //     !formData.nameEn ||
-  //     !formData.nameRu ||
-  //     !formData.barcode ||
-  //     formData.categoryId == null ||
-  //     formData.subCategoryId == null ||
-  //     formData.segmentId == null ||
-  //     formData.statusId == null ||
-  //     formData.brandId == null ||
-  //     formData.sellPrice == "" ||
-  //     formData.incomePrice == "" ||
-  //     formData.productQuantity == 0 ||
-  //     !productImages.length
-  //   ) {
-  //     toast.error("Maglumatlary giriziň!");
-  //     return;
-  //   } else {
-  //     dispatch(createProduct(body));
-  //     navigate("/products");
-  //   }
-  // };
   return (
     <Box height="100vh" overflow="auto" width="100%" p={1}>
       <Stack direction="row" p="5px 13px" justifyContent="space-between">
@@ -570,7 +363,33 @@ const NewProduct = () => {
           />
         </Stack>
       </Stack>
-      {/* <Divider sx={{ mt: 2, mb: 2, bgcolor: "gray" }} /> */}
+      <Stack width="100%" mt={2} direction="row" spacing={2}>
+        <Button
+          sx={{
+            textTransform: "revert",
+            minWidth: "18%",
+            height: 40,
+            color: "#fff",
+            bgcolor: "#00B69B",
+            "&:hover": { bgcolor: "#00B69B" },
+            fontWeight: 500,
+            fontFamily: "Montserrat",
+            fontSize: 16,
+            mt: 2,
+          }}
+          onClick={() => setOpenProperty(!openProperty)}
+        >
+          <LuPackagePlus style={{ width: 30, height: 30, marginRight: 8 }} />
+          Aýratynlyklary
+        </Button>
+        <AddProperty
+          open={openProperty}
+          handleClose={() => setOpenProperty(false)}
+          properties={properties}
+          addProperty={addProperty}
+          setProperties={setProperties}
+        />
+      </Stack>
 
       <Stack mt={1} width="100%" alignItems={"end"}>
         <Stack width="100%" mt={0}>
@@ -579,25 +398,9 @@ const NewProduct = () => {
             formValues={formData}
             handleProductTypeInputChange={handleInputChange}
             handleProductTypeInputChange2={handleProductTypeInputChange}
-            textFieldValues={textFieldValues}
-            setTextFieldValues={setTextFieldValues}
-            handleTextFieldChange={handleTextFieldChange}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            handleChangeSelectedValue={handleChangeSelectedValue}
-            setFormValues={setFormValues}
           />
 
           <Stack direction="row" spacing={2}>
-            {/* {productImages.some((img) => img !== null) ? (
-                    <ProductSwiper
-                      images={productImages.filter((img) => img !== null)}
-                    />
-                  ) : (
-                    <div className="center-col h-[250px] w-[250px]">
-                      <ImagePlus className="text-dark size-12" />
-                    </div>
-                  )} */}
             <SwiperWithFileInput
               images={productImages.filter((img) => img !== null)}
               setImages={setProductImages}
@@ -673,32 +476,6 @@ const NewProduct = () => {
           </Stack>
         </Stack>
       </Stack>
-      {openProductType == false && productType.length ? (
-        <Button
-          variant="contained"
-          sx={{
-            textTransform: "revert",
-            minWidth: "20%",
-            height: 40,
-            color: "#fff",
-            bgcolor: "#00B69B",
-            "&:hover": { bgcolor: "#00B69B" },
-            fontWeight: 500,
-            fontFamily: "Montserrat",
-            fontSize: 16,
-            mt: 2,
-          }}
-          // onClick={handleNewProductSubmit}
-          onClick={handleSubmit}
-        >
-          {/* <LuPackagePlus /> */}
-          <LuPackagePlus style={{ width: 30, height: 30, marginRight: 8 }} />
-          {/* Goşmak */}
-          Tassykla
-        </Button>
-      ) : (
-        ""
-      )}
     </Box>
   );
 };

@@ -534,7 +534,7 @@ const Get = ({ filters, handleFilterChange, setFilters, viewMode }) => {
                                   "Kabul edilen"
                                 ? "#93C5FD"
                                 : category.orderStatusDetails?.nameTm ===
-                                  "Ýatyrylan"
+                                  "Yzyna gaýtarylan"
                                 ? "#FCA5A5"
                                 : mode === "dark"
                                 ? "#0D1117"

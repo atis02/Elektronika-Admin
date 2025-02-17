@@ -45,7 +45,7 @@ const Participants = ({ data }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.participants.map((user, index) => (
+            {data?.participants?.map((user, index) => (
               <TableRow key={user.id}>
                 <TableCell
                   sx={{ ...style2, pl: 1 }}
@@ -63,7 +63,7 @@ const Participants = ({ data }) => {
                   sx={{ ...style2 }}
                   onClick={() => productNavigate(user.id)}
                 >
-                  {user.email}
+                  {user?.email}
                 </TableCell>
                 <TableCell
                   sx={{ ...style2 }}
@@ -77,8 +77,8 @@ const Participants = ({ data }) => {
         </Table>
       </TableContainer>
       <Typography mt={1}>
-        Ýeňiji: {data?.lastBidder.email} - {data?.lastBidder.name} -{" "}
-        {data?.lastBidder.phoneNumber}
+        Ýeňiji: {data?.lastBidder?.email} - {data?.lastBidder?.name} -{" "}
+        {data?.lastBidder?.phoneNumber}
       </Typography>
     </Stack>
   );

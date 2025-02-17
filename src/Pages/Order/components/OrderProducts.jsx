@@ -40,6 +40,13 @@ const OrderProducts = ({ data }) => {
     WebkitLineClamp: 2,
     WebkitBoxOrient: "vertical",
   };
+  const calculateOrderedItemsPrice = (data) => {
+    let totalPrice = 0;
+    totalPrice = data.quantity * data.price;
+    return totalPrice;
+  };
+  console.log(data);
+
   return (
     <Box
       //  width="65%"
@@ -121,7 +128,7 @@ const OrderProducts = ({ data }) => {
                   sx={{ ...style2 }}
                 >
                   <Typography sx={style3}>
-                    {category.product?.sellPrice} m
+                    {category.price} m
                     {/* {dayjs(category.deliveryDate).format("DD.MM.YYYY")} */}
                   </Typography>
                 </TableCell>
@@ -129,14 +136,11 @@ const OrderProducts = ({ data }) => {
                   onClick={() => productNavigate(category.id)}
                   sx={{ ...style2 }}
                 >
-                  <Typography sx={style3}> {data?.totalAmount}</Typography>
+                  <Typography sx={style3}>
+                    {" "}
+                    {calculateOrderedItemsPrice(category)}
+                  </Typography>
                 </TableCell>
-                {/* <TableCell
-                  sx={style2}
-                  onClick={() => productNavigate(category.id)}
-                >
-                  {data?.totalAmount}
-                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

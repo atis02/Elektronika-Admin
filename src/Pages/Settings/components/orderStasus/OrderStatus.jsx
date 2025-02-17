@@ -15,10 +15,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useThemeContext } from "../../../../Components/db/Theme/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteStatusProduct,
-  getStatusProduct,
-} from "../../../../Components/db/Redux/api/StatusSlice";
 import { toast } from "react-toastify";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
@@ -26,8 +22,12 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddStatusModal from "./components/AddStatusModal";
 import MyForm from "./components/Forms";
 import UpdateStatusModal from "./components/updateStatusModal";
+import {
+  deleteStatusOrder,
+  getStatusOrder,
+} from "../../../../Components/db/Redux/api/OrderStatusSlice";
 
-const ProductStasus = () => {
+const OrderStatus = () => {
   const [open, setOpen] = useState(false);
   const [dataUpdate, setDataUpdate] = useState("");
 
@@ -36,12 +36,12 @@ const ProductStasus = () => {
   const handleClose = () => setOpen(false);
   const { mode } = useThemeContext();
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.status.data);
-  const status = useSelector((state) => state.status.status);
-  const error = useSelector((state) => state.status.error);
+  const data = useSelector((state) => state.orderStatuses.data);
+  const status = useSelector((state) => state.orderStatuses.status);
+  const error = useSelector((state) => state.orderStatuses.error);
 
   useEffect(() => {
-    dispatch(getStatusProduct());
+    dispatch(getStatusOrder());
   }, [dispatch]);
   console.log(data);
   const style2 = {
@@ -53,7 +53,7 @@ const ProductStasus = () => {
   };
   const handleDelete = (id) => {
     if (id) {
-      dispatch(deleteStatusProduct(id));
+      dispatch(deleteStatusOrder(id));
     }
   };
   const handleUpdateProductStatus = (elem) => {
@@ -75,7 +75,7 @@ const ProductStasus = () => {
           sx={mode === "dark" ? { color: "inherit" } : { color: "#474747" }}
           //   mt={1}
         >
-          Haryt Statuslary
+          Sargyt Statuslary
         </Typography>
         <Button
           variant="contained"
@@ -127,9 +127,9 @@ const ProductStasus = () => {
           )
         ) : status === "succeeded" ? (
           <Box mt={2}>
-            {data?.length === 0 ? (
+            {data.length === 0 ? (
               <Typography textAlign="center" mt={7}>
-                Haryt satus gornüşi ýok!
+                Sargyt satus gornüşi ýok!
               </Typography>
             ) : (
               <Stack
@@ -163,7 +163,7 @@ const ProductStasus = () => {
                     </TableHead>
 
                     <TableBody>
-                      {data?.map((item, index) => (
+                      {data.map((item, index) => (
                         <TableRow key={index}>
                           <TableCell
                             onClick={() => handleUpdateProductStatus(item)}
@@ -246,4 +246,4 @@ const ProductStasus = () => {
   );
 };
 
-export default ProductStasus;
+export default OrderStatus;

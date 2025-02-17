@@ -15,10 +15,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useThemeContext } from "../../../../Components/db/Theme/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteStatusProduct,
-  getStatusProduct,
-} from "../../../../Components/db/Redux/api/StatusSlice";
 import { toast } from "react-toastify";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
@@ -26,8 +22,16 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddStatusModal from "./components/AddStatusModal";
 import MyForm from "./components/Forms";
 import UpdateStatusModal from "./components/updateStatusModal";
+import {
+  deleteStatusOrder,
+  getStatusOrder,
+} from "../../../../Components/db/Redux/api/OrderStatusSlice";
+import {
+  deleteDeliveryCityPrice,
+  getDeliveryCityPrice,
+} from "../../../../Components/db/Redux/api/RegionsSlice";
 
-const ProductStasus = () => {
+const RegionsAndPrice = () => {
   const [open, setOpen] = useState(false);
   const [dataUpdate, setDataUpdate] = useState("");
 
@@ -36,12 +40,12 @@ const ProductStasus = () => {
   const handleClose = () => setOpen(false);
   const { mode } = useThemeContext();
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.status.data);
-  const status = useSelector((state) => state.status.status);
-  const error = useSelector((state) => state.status.error);
+  const data = useSelector((state) => state.deliveryCity.data);
+  const status = useSelector((state) => state.deliveryCity.status);
+  const error = useSelector((state) => state.deliveryCity.error);
 
   useEffect(() => {
-    dispatch(getStatusProduct());
+    dispatch(getDeliveryCityPrice());
   }, [dispatch]);
   console.log(data);
   const style2 = {
@@ -53,7 +57,7 @@ const ProductStasus = () => {
   };
   const handleDelete = (id) => {
     if (id) {
-      dispatch(deleteStatusProduct(id));
+      dispatch(deleteDeliveryCityPrice(id));
     }
   };
   const handleUpdateProductStatus = (elem) => {
@@ -75,7 +79,7 @@ const ProductStasus = () => {
           sx={mode === "dark" ? { color: "inherit" } : { color: "#474747" }}
           //   mt={1}
         >
-          Haryt Statuslary
+          Sebitler üçin sargyt töleg möçberi
         </Typography>
         <Button
           variant="contained"
@@ -95,7 +99,7 @@ const ProductStasus = () => {
           }}
         >
           <AddIcon sx={{ width: 20, height: 20, mr: 0.5 }} />
-          Täze status
+          Täze
         </Button>
       </Stack>
       <Stack>
@@ -127,9 +131,9 @@ const ProductStasus = () => {
           )
         ) : status === "succeeded" ? (
           <Box mt={2}>
-            {data?.length === 0 ? (
+            {data.length === 0 ? (
               <Typography textAlign="center" mt={7}>
-                Haryt satus gornüşi ýok!
+                Sargyt üçin töleg gornüşi ýok!
               </Typography>
             ) : (
               <Stack
@@ -153,6 +157,9 @@ const ProductStasus = () => {
                     <TableHead>
                       <TableRow>
                         <TableCell sx={{ ...style2, p: 1 }}>№</TableCell>
+                        <TableCell sx={{ ...style2, p: 1 }}>
+                          Sargyt üçin baha
+                        </TableCell>
                         <TableCell sx={{ ...style2, p: 1 }}>Ady (TM)</TableCell>
                         <TableCell sx={{ ...style2, p: 1 }}>Ady (RU)</TableCell>
                         <TableCell sx={{ ...style2, p: 1 }}>Ady (EN)</TableCell>
@@ -163,7 +170,7 @@ const ProductStasus = () => {
                     </TableHead>
 
                     <TableBody>
-                      {data?.map((item, index) => (
+                      {data.map((item, index) => (
                         <TableRow key={index}>
                           <TableCell
                             onClick={() => handleUpdateProductStatus(item)}
@@ -171,7 +178,12 @@ const ProductStasus = () => {
                           >
                             {index + 1}
                           </TableCell>
-
+                          <TableCell
+                            onClick={() => handleUpdateProductStatus(item)}
+                            sx={style2}
+                          >
+                            {item.deliveryPrice} M
+                          </TableCell>
                           <TableCell
                             onClick={() => handleUpdateProductStatus(item)}
                             sx={style2}
@@ -246,4 +258,4 @@ const ProductStasus = () => {
   );
 };
 
-export default ProductStasus;
+export default RegionsAndPrice;

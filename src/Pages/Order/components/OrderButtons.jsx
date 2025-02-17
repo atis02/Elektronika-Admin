@@ -67,7 +67,7 @@ const OrderButtons = ({ data }) => {
             textTransform: "revert",
             fontWeight: 400,
             fontFamily: "Montserrat",
-            fontSize: 16,
+            fontSize: 15,
             p: 1,
             color:
               mode === "dark"
@@ -91,7 +91,7 @@ const OrderButtons = ({ data }) => {
                   ? "#86EFAC"
                   : btn.nameTm === "Kabul edilen"
                   ? "#93C5FD"
-                  : btn.nameTm === "Ýatyrylan"
+                  : btn.nameTm === "Yzyna gaýtarylan"
                   ? "#FCA5A5"
                   : "",
             },
@@ -106,7 +106,7 @@ const OrderButtons = ({ data }) => {
             <BsFillCartCheckFill style={{ marginRight: "10px" }} size={23} />
           ) : btn.nameTm === "Kabul edilen" ? (
             <PlaylistAddCheckIcon sx={{ mr: 1 }} />
-          ) : btn.nameTm === "Ýatyrylan" ? (
+          ) : btn.nameTm === "Yzyna gaýtarylan" ? (
             <HighlightOffIcon sx={{ mr: 1 }} />
           ) : (
             ""
@@ -121,7 +121,7 @@ const OrderButtons = ({ data }) => {
           textTransform: "revert",
           fontWeight: 400,
           fontFamily: "Montserrat",
-          fontSize: 16,
+          fontSize: 15,
           p: 1,
           color: mode === "dark" ? "#fff" : "#00B69B",
           borderColor: mode === "dark" ? "#00B69B" : "inherit",
@@ -142,7 +142,7 @@ const OrderButtons = ({ data }) => {
           textTransform: "revert",
           fontWeight: 400,
           fontFamily: "Montserrat",
-          fontSize: 16,
+          fontSize: 15,
           p: 1,
           color: mode === "dark" ? "#fff" : "#00B69B",
           borderColor: mode === "dark" ? "#00B69B" : "inherit",

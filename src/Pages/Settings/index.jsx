@@ -49,13 +49,11 @@ const index = () => {
     },
     {
       url: "/settings/orderStatuses",
-
       name: "Sargyt statuslary",
       icon: <AssignmentIcon sx={{ width: 30, height: 30 }} />,
     },
     {
       url: "/settings/regions",
-
       name: "Sebitler",
       icon: <LocationOnIcon sx={{ width: 30, height: 30 }} />,
     },
@@ -69,24 +67,24 @@ const index = () => {
       name: "Müşderiler",
       icon: <PersonIcon sx={{ width: 30, height: 30 }} />,
     },
-    {
-      url: "/settings/deliveryTimes",
+    // {
+    //   url: "/settings/deliveryTimes",
 
-      name: "Eltip berme wagtlary",
-      icon: <AccessTimeIcon sx={{ width: 30, height: 30 }} />,
-    },
-    {
-      url: "/settings/deliveryTypes",
+    //   name: "Eltip berme wagtlary",
+    //   icon: <AccessTimeIcon sx={{ width: 30, height: 30 }} />,
+    // },
+    // {
+    //   url: "/settings/deliveryTypes",
 
-      name: "Eltip berme görnüşleri",
-      icon: <LocalShippingIcon sx={{ width: 30, height: 30 }} />,
-    },
-    {
-      url: "/settings/paymentTypes",
+    //   name: "Eltip berme görnüşleri",
+    //   icon: <LocalShippingIcon sx={{ width: 30, height: 30 }} />,
+    // },
+    // {
+    //   url: "/settings/paymentTypes",
 
-      name: "Tölegiň görnüşleri",
-      icon: <PaymentIcon sx={{ width: 30, height: 30 }} />,
-    },
+    //   name: "Tölegiň görnüşleri",
+    //   icon: <PaymentIcon sx={{ width: 30, height: 30 }} />,
+    // },
   ];
   return (
     <Box height="100vh" overflow="auto" width="100%" p={1}>

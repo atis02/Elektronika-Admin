@@ -89,6 +89,7 @@ const Forms = ({
         </Stack> */}
         <Stack spacing={2} pt={1} direction="row">
           <textarea
+            className="textarea"
             placeholder="Beýan (TM)"
             value={formValues.descriptionTm}
             onChange={(e) =>
@@ -110,6 +111,7 @@ const Forms = ({
           ></textarea>
 
           <textarea
+            className="textarea"
             placeholder="Beýan (RU)"
             value={formValues.descriptionRu}
             onChange={(e) =>
@@ -130,6 +132,7 @@ const Forms = ({
             }}
           ></textarea>
           <textarea
+            className="textarea"
             placeholder="Beýan (EN)"
             value={formValues.descriptionEn}
             onChange={(e) =>

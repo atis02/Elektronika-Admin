@@ -44,6 +44,14 @@ const OrderDetails = ({ data }) => {
       </Typography>
     </Stack>
   );
+  const calculateQuantityProducts = (data) => {
+    let products = data.orderItems;
+    let quantityProducts = 0;
+    products?.forEach((product) => {
+      quantityProducts += product.quantity;
+    });
+    return quantityProducts;
+  };
 
   return (
     <Box
@@ -69,7 +77,10 @@ const OrderDetails = ({ data }) => {
           value: formatPhoneNumber(data.customerPhoneNumber?.replace("+", "")),
         },
         { label: "Salgy (welaýat):", value: data.orderRegion },
-        { label: "Salgy (şäher):", value: data.orderCity },
+        {
+          label: "Salgy (şäher):",
+          value: data.orderDeliveryCityPayment?.nameTm,
+        },
         { label: "Salgy (öý):", value: data.shippingAddress },
         { label: "Teswir:", value: data.notes },
         { label: "Töleg:", value: data.paymentMethod },
@@ -78,8 +89,14 @@ const OrderDetails = ({ data }) => {
           label: "Eltip bermeli senesi:",
           value: dayjs(data.deliveryDate).format("DD.MM.YYYY"),
         },
-        { label: "Eltip bermeli salgysy:", value: `${data.orderCity} / 20 M` },
-        { label: "Harytlaryň umumy sany:", value: data.orderItems?.length },
+        {
+          label: "Eltip bermeli salgysy(bahasy):",
+          value: `${data.orderDeliveryCityPayment?.nameTm} / ${data.orderDeliveryCityPayment?.deliveryPrice} M`,
+        },
+        {
+          label: "Harytlaryň umumy sany:",
+          value: calculateQuantityProducts(data),
+        },
         { label: "Sargydyň umumy bahasy:", value: `${data.totalAmount} M` },
       ].map((item, index) => (
         <InfoRow key={index} {...item} />

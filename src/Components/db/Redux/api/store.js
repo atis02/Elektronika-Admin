@@ -10,6 +10,9 @@ import bannerReducer from "./BannerSlice";
 import PartnerReducer from "./PartnerSlice";
 import OrderReducer from "./OrderSlice";
 import AuctionReducer from "./AuctionSlice";
+import OrderStasusReducer from "./OrderStatusSlice";
+import deliveryCityReducer from "./RegionsSlice";
+import adminUsersRedcuer from "./UsersAdminPageSlice";
 
 export const store = configureStore({
   reducer: {
@@ -24,5 +27,8 @@ export const store = configureStore({
     partner: PartnerReducer,
     order: OrderReducer,
     auction: AuctionReducer,
+    orderStatuses: OrderStasusReducer,
+    deliveryCity: deliveryCityReducer,
+    usersAdminPage: adminUsersRedcuer,
   },
 });
